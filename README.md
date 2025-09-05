@@ -4,6 +4,20 @@
 
 A sophisticated RAG (Retrieval-Augmented Generation) application that helps you understand legal documents through AI-powered question answering. Built with modern technologies and featuring a stunning glassmorphism UI.
 
+## 🖼️ Screenshots
+
+### 📤 Upload Documents Interface
+![Upload Documents](https://github.com/tharunK03/Legal-View/assets/upload-documents-screenshot.png)
+*Clean, modern interface for uploading legal documents with drag-and-drop functionality*
+
+### 💬 AI Chat Interface
+![Ask Questions](https://github.com/tharunK03/Legal-View/assets/ask-questions-screenshot.png)
+*Interactive chat interface with AI-powered document analysis and intelligent filtering*
+
+### 📚 Document Library
+![Document Library](https://github.com/tharunK03/Legal-View/assets/document-library-screenshot.png)
+*Comprehensive document management with search, view, download, and delete capabilities*
+
 ## ✨ Features
 
 ### 🤖 **AI-Powered Analysis**
@@ -27,6 +41,28 @@ A sophisticated RAG (Retrieval-Augmented Generation) application that helps you 
 - **CRUD Operations** - Upload, view, download, and delete documents
 - **Metadata Display** - File size, upload date, and processing status
 
+## 🎯 **Key Interface Features**
+
+### **📤 Upload Documents Tab**
+- **Drag & Drop Interface** - Intuitive file upload with visual feedback
+- **File Type Validation** - Supports PDF, DOC, DOCX, and TXT files
+- **Backend Connection Status** - Clear instructions for setup
+- **Feature Overview Cards** - Smart Search, Term Definitions, Document Analysis
+
+### **💬 Ask Questions Tab**
+- **Query Type Selection** - General Question, Term Definition, Document Summary
+- **Document Filtering** - Select specific documents for targeted queries
+- **Real-time Chat Interface** - Interactive conversation with AI
+- **Quick Actions** - Predefined action buttons for common tasks
+- **System Status Indicators** - Backend connection and AI readiness status
+
+### **📚 Document Library Tab**
+- **Search & Filter** - Find documents quickly with search functionality
+- **Document Cards** - Beautiful cards showing file details and metadata
+- **Action Buttons** - View, download, and delete operations
+- **Processing Status** - Visual indicators for document processing state
+- **Refresh Functionality** - Update document list in real-time
+
 ## 🏗️ Architecture
 
 ### **System Overview**
@@ -36,6 +72,23 @@ A sophisticated RAG (Retrieval-Augmented Generation) application that helps you 
 │   (React)       │◄──►│   (FastAPI)     │◄──►│   (Gemini AI)   │
 │   Port: 5173    │    │   Port: 8001    │    │   (Embeddings)  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Modern UI     │    │   Document      │    │   Vector Store  │
+│   Components    │    │   Processing    │    │   (FAISS)       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### **Data Flow Architecture**
+```
+📄 Documents → 🔄 Processing → 🧠 AI Analysis → 💬 User Interface
+     ↓              ↓              ↓              ↓
+  Upload        Text Split      Embeddings    Chat Interface
+     ↓              ↓              ↓              ↓
+  Storage        Chunking       Vector DB     Real-time Q&A
+     ↓              ↓              ↓              ↓
+  File System    LangChain     FAISS Store   React Frontend
 ```
 
 ### **Technology Stack**
@@ -210,6 +263,33 @@ streamlit run app.py
 - **API Documentation:** http://localhost:8001/docs
 - **API Health Check:** http://localhost:8001/health
 
+## 🎬 **Live Demo**
+
+Once you have the application running, you can experience:
+
+### **1. Document Upload Flow**
+1. Navigate to the **Upload Documents** tab
+2. Drag and drop your legal documents (PDF, DOC, DOCX, TXT)
+3. Watch the AI process and analyze your documents
+4. Get confirmation of successful processing
+
+### **2. AI-Powered Question Answering**
+1. Switch to the **Ask Questions** tab
+2. Select your document from the dropdown (optional)
+3. Choose query type: General Question, Term Definition, or Document Summary
+4. Ask questions like:
+   - "What are the key terms in this contract?"
+   - "Define force majeure"
+   - "Summarize the main obligations"
+5. Get AI-powered answers with source citations
+
+### **3. Document Management**
+1. Visit the **Document Library** tab
+2. Search through your uploaded documents
+3. View document metadata (size, type, upload date)
+4. Download original files or delete documents
+5. Use the refresh button to update the list
+
 ### **Application Features**
 
 #### **1. Upload Documents**
@@ -260,34 +340,45 @@ export default defineConfig({
 
 ```
 Legal-View/
-├── backend/                 # FastAPI backend
-│   ├── main.py             # Main API server
-│   └── simple_main.py      # Simplified backend (backup)
-├── frontend/               # React frontend
+├── 🎨 frontend/               # React Frontend (Port 5173)
 │   ├── src/
-│   │   ├── components/     # React components
-│   │   │   ├── ChatInterface.tsx
-│   │   │   ├── DocumentList.tsx
-│   │   │   └── DocumentUpload.tsx
-│   │   ├── App.tsx         # Main app component
-│   │   └── main.tsx        # Entry point
-│   ├── package.json        # Frontend dependencies
-│   └── vite.config.ts      # Vite configuration
-├── modules/                # Core functionality
-│   ├── embeddings.py       # Text embedding generation
-│   ├── loader.py           # Document loading
-│   ├── rag_chain.py        # RAG pipeline
-│   ├── retriever.py        # Document retrieval
-│   └── splitter.py         # Text splitting
-├── data/                   # Document storage
-├── vectorstore/            # FAISS vector database
-├── tests/                  # Test files
-├── config.py               # Configuration settings
-├── ingest.py               # Document ingestion script
-├── app.py                  # Streamlit app (legacy)
-├── requirements.txt        # Python dependencies
-└── .env                    # Environment variables
+│   │   ├── components/        # 🧩 UI Components
+│   │   │   ├── 📤 DocumentUpload.tsx
+│   │   │   ├── 💬 ChatInterface.tsx
+│   │   │   └── 📚 DocumentList.tsx
+│   │   ├── 🏠 App.tsx         # Main Application
+│   │   └── 🚀 main.tsx        # Entry Point
+│   ├── 📦 package.json        # Frontend Dependencies
+│   └── ⚙️ vite.config.ts      # Build Configuration
+├── 🔧 backend/                # FastAPI Backend (Port 8001)
+│   ├── 🚀 main.py             # Main API Server
+│   └── 🔄 simple_main.py      # Simplified Backend
+├── 🧠 modules/                # Core AI Functionality
+│   ├── 🔤 embeddings.py       # Text Embedding Generation
+│   ├── 📄 loader.py           # Document Loading
+│   ├── 🔗 rag_chain.py        # RAG Pipeline
+│   ├── 🔍 retriever.py        # Document Retrieval
+│   └── ✂️ splitter.py         # Text Splitting
+├── 📁 data/                   # Document Storage
+├── 🗄️ vectorstore/            # FAISS Vector Database
+├── 🧪 tests/                  # Test Files
+├── ⚙️ config.py               # Configuration Settings
+├── 📥 ingest.py               # Document Ingestion Script
+├── 📱 app.py                  # Streamlit App (Legacy)
+├── 📋 requirements.txt        # Python Dependencies
+└── 🔐 .env                    # Environment Variables
 ```
+
+### **Key Directories Explained**
+
+| Directory | Purpose | Key Files |
+|-----------|---------|-----------|
+| 🎨 **frontend/** | React UI with modern glassmorphism design | App.tsx, components/ |
+| 🔧 **backend/** | FastAPI server with document processing | main.py |
+| 🧠 **modules/** | Core AI and document processing logic | rag_chain.py, embeddings.py |
+| 📁 **data/** | Storage for uploaded legal documents | *.pdf, *.txt files |
+| 🗄️ **vectorstore/** | FAISS database for semantic search | index.faiss, index.pkl |
+| 🧪 **tests/** | Unit and integration tests | test_rag_pipeline.py |
 
 ## 🧪 Testing
 
