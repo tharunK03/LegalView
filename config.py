@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # AI API Configuration
-AI_API_KEY = os.getenv("AI_API_KEY", "AIzaSyCr_Nyd76FJ8yhfOh92cm-7c8QauO_gOjI")
+AI_API_KEY = os.getenv("AI_API_KEY", "nil")
 if not AI_API_KEY:
     raise ValueError("AI_API_KEY environment variable is required")
 
