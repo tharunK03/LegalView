@@ -1,0 +1,28 @@
+{
+  "name": "legalview",
+  "version": "1.0.0",
+  "description": "Lightweight Node server for LegalView.",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tharunK03/LegalVieW.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tharunK03/LegalVieW/issues"
+  },
+  "homepage": "https://github.com/tharunK03/LegalVieW#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
