@@ -1,7 +1,80 @@
 # Python
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.so
+*.dylib
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Project specific
+/data/*
+!/data/.gitkeep
+/vectorstore/*
+!/vectorstore/.gitkeep
+vectorstore_backup_*/
+
+# Node/React (Frontend)
+node_modules/
+/frontend/node_modules/
+/frontend/build/
+/frontend/dist/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.*
+.pnp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and databases
+*.log
+*.sqlite
+backend.log
+
+# Testing
+coverage/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Distribution / packaging
+.Python
+*.dylib
 .venv/
 venv/
 .env
