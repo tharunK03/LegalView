@@ -2,16 +2,11 @@ pipeline {
   agent any
 
   environment {
-    APP_NAME        = 'sai-baba'
-    AWS_REGION      = 'ap-south-1'
-    K8S_NAMESPACE   = 'prod'
-    REGISTRY        = 'docker.io/tharun03k'
-    IMAGE_NAME      = "${APP_NAME}"
-    GIT_SHORT_SHA   = "${env.GIT_COMMIT?.take(7) ?: 'local'}"
-  }
-
-  parameters {
-    choice(name: 'REGISTRY_TYPE', choices: ['ECR', 'DOCKER_HUB'], description: 'Where to push image')
+    APP_NAME      = 'sai-baba'
+    K8S_NAMESPACE = 'prod'
+    REGISTRY      = 'docker.io/tharun03k'
+    IMAGE_NAME    = "${APP_NAME}"
+    GIT_SHORT_SHA = "${env.GIT_COMMIT?.take(7) ?: 'local'}"
   }
 
   options { timestamps() }
@@ -23,15 +18,6 @@ pipeline {
       }
     }
 
-    stage('Build & Unit Test') {
-      steps {
-        sh '''
-          echo "Run your tests here"
-          # e.g., npm ci && npm test
-        '''
-      }
-    }
-
     stage('Docker Build') {
       steps {
         sh '''
@@ -40,29 +26,7 @@ pipeline {
       }
     }
 
-    stage('Docker Login & Tag') {
-      when { expression { params.REGISTRY_TYPE == 'ECR' } }
-      environment {
-        AWS_DEFAULT_REGION = "${AWS_REGION}"
-      }
-      steps {
-        withAWS(credentials: 'aws-creds', region: "${AWS_REGION}") {
-          sh '''
-            aws ecr describe-repositories --repository-names ${IMAGE_NAME} || \
-              aws ecr create-repository --repository-name ${IMAGE_NAME} >/dev/null
-
-            export ECR_URI=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_URI}
-            docker tag ${IMAGE_NAME}:${GIT_SHORT_SHA} ${ECR_URI}/${IMAGE_NAME}:${GIT_SHORT_SHA}
-            docker push ${ECR_URI}/${IMAGE_NAME}:${GIT_SHORT_SHA}
-            echo ${ECR_URI} > ecr_uri.txt
-          '''
-        }
-      }
-    }
-
-    stage('Docker Login & Push (Docker Hub)') {
-      when { expression { params.REGISTRY_TYPE == 'DOCKER_HUB' } }
+    stage('Docker Login & Push') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
           sh '''
@@ -103,12 +67,7 @@ pipeline {
             IDLE=$(cat .idle_color)
 
             # Resolve image reference
-            if [ "${params.REGISTRY_TYPE}" = "ECR" ]; then
-              ECR_URI=$(cat ecr_uri.txt)
-              IMAGE="${ECR_URI}/${IMAGE_NAME}:${GIT_SHORT_SHA}"
-            else
-              IMAGE="${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}"
-            fi
+            IMAGE="${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}"
 
             # Create namespace and service if first deploy
             kubectl apply -f k8s/ns.yaml
