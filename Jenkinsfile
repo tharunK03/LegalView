@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     APP_NAME      = 'sai-baba'
-    REGISTRY      = 'docker.io/tharun03k'
+    REGISTRY      = "${env.REGISTRY ?: 'registry.internal:5000'}"
     IMAGE_NAME    = "${APP_NAME}"
     K8S_NAMESPACE = 'prod'
     GIT_SHORT_SHA = "${env.GIT_COMMIT?.take(7) ?: 'local'}"
@@ -20,17 +20,15 @@ pipeline {
 
     stage('Docker Build & Push') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
-          sh '''
-            echo "Building Docker image"
-            docker build -t ${IMAGE_NAME}:${GIT_SHORT_SHA} .
+        sh '''
+          echo "Building Docker image"
+          docker build -t ${IMAGE_NAME}:${GIT_SHORT_SHA} .
 
-            echo "Logging in to Docker registry"
-            echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-            docker tag ${IMAGE_NAME}:${GIT_SHORT_SHA} ${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}
-            docker push ${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}
-          '''
-        }
+          echo "Tagging image for ${REGISTRY}"
+          docker tag ${IMAGE_NAME}:${GIT_SHORT_SHA} ${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}
+          echo "Pushing image to ${REGISTRY}"
+          docker push ${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}
+        '''
       }
     }
 
