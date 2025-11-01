@@ -1,11 +1,14 @@
 from langchain.chains import RetrievalQA
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
+from typing import Optional
+
 from modules.retriever import get_retriever
 from config import LLM_MODEL, AI_API_KEY
 
-def get_rag_chain():
-    retriever = get_retriever()
+
+def get_rag_chain(document_source: Optional[str] = None):
+    retriever = get_retriever(document_source=document_source)
     llm = ChatGoogleGenerativeAI(
         model=LLM_MODEL,
         google_api_key=AI_API_KEY,

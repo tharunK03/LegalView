@@ -8,6 +8,7 @@ import os
 import shutil
 from pathlib import Path
 import sys
+from typing import Optional
 
 class QueryRequest(BaseModel):
     query: str
@@ -37,6 +38,28 @@ app.add_middleware(
 # Create data directory if it doesn't exist
 DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
+
+def resolve_document_source(filter_value: Optional[str]) -> Optional[str]:
+    """
+    Map a user-provided document filter to the stored source metadata value.
+    Returns the relative path stored in the vector store (e.g. 'data/file.pdf')
+    or None if no specific filter should be applied.
+    """
+    if not filter_value:
+        return None
+    candidate = filter_value.strip()
+    if not candidate or candidate.lower() in {"all documents", "all"}:
+        return None
+
+    # Try to match against files in the data directory
+    candidate_lower = candidate.lower()
+    for path in DATA_DIR.glob("*"):
+        if path.is_file():
+            if candidate_lower == path.name.lower():
+                return str(Path("data") / path.name)
+            if candidate_lower in path.name.lower():
+                return str(Path("data") / path.name)
+    return None
 
 # Initialize RAG chain
 try:
@@ -106,9 +129,17 @@ async def query_documents(request: QueryRequest):
     """Query the RAG system"""
     if not qa_chain:
         raise HTTPException(status_code=500, detail="RAG chain not initialized")
+
+    document_source = resolve_document_source(request.document_filter)
+    if request.document_filter and not document_source:
+        raise HTTPException(status_code=404, detail="Requested document not found")
     
     try:
-        result = qa_chain({"query": request.query})
+        chain_to_use = qa_chain
+        if document_source:
+            chain_to_use = get_rag_chain(document_source=document_source)
+
+        result = chain_to_use.invoke({"query": request.query})
         
         # Filter sources by document if specified
         sources = result.get("source_documents", [])
@@ -116,6 +147,7 @@ async def query_documents(request: QueryRequest):
             sources = [
                 doc for doc in sources 
                 if request.document_filter in doc.metadata.get("source", "")
+                or (document_source and doc.metadata.get("source") == document_source)
             ]
         
         return {

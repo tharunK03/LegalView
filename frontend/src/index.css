@@ -7,6 +7,15 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  body {
+    @apply bg-legal-50 text-legal-900 transition-colors duration-500;
+  }
+
+  .dark body {
+    @apply bg-legal-900 text-legal-100;
   }
 }
 

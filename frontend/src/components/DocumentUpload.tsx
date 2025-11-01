@@ -99,14 +99,14 @@ const DocumentUpload = ({ onDocumentUploaded }: DocumentUploadProps) => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 rounded-full mb-4">
-          <Upload className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium text-blue-700">Document Upload</span>
+        <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 px-4 py-2 rounded-full mb-4 transition-colors duration-500">
+          <Upload className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+          <span className="text-sm font-medium text-blue-700 dark:text-blue-200">Document Upload</span>
         </div>
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
+        <h2 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent mb-3 transition-colors duration-500">
           Upload Legal Documents
         </h2>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+        <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto transition-colors duration-500">
           Upload your legal documents to get started. Our AI will analyze them and help you understand 
           legal terms, answer questions, and provide insights based on your specific documents.
         </p>
@@ -117,20 +117,20 @@ const DocumentUpload = ({ onDocumentUploaded }: DocumentUploadProps) => {
         {...getRootProps()}
         className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all duration-200 ${
           isDragActive
-            ? 'border-blue-400 bg-gradient-to-r from-blue-50 to-indigo-50 scale-105'
-            : 'border-slate-300 hover:border-blue-400 hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 hover:scale-102'
+            ? 'border-blue-400 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 scale-105'
+            : 'border-slate-300 dark:border-slate-600 hover:border-blue-400 hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 dark:hover:from-slate-800/60 dark:hover:to-blue-500/10 hover:scale-102'
         }`}
       >
         <input {...getInputProps()} />
-        <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <Upload className="h-10 w-10 text-blue-600" />
+        <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-500/20 dark:to-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <Upload className="h-10 w-10 text-blue-600 dark:text-blue-300" />
         </div>
         <div className="space-y-3">
-          <p className="text-xl font-semibold text-slate-900">
+          <p className="text-xl font-semibold text-slate-900 dark:text-slate-100 transition-colors duration-500">
             {isDragActive ? 'Drop files here' : 'Drag & drop files here'}
           </p>
-          <p className="text-slate-600">or click to browse files</p>
-          <p className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full inline-block">
+          <p className="text-slate-600 dark:text-slate-300">or click to browse files</p>
+          <p className="text-sm text-slate-500 dark:text-slate-200 bg-slate-100 dark:bg-slate-800/70 px-3 py-1 rounded-full inline-block transition-colors duration-500">
             Supports PDF, DOC, DOCX, and TXT files
           </p>
         </div>
@@ -139,22 +139,22 @@ const DocumentUpload = ({ onDocumentUploaded }: DocumentUploadProps) => {
       {/* Uploaded Files */}
       {uploadedFiles.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-slate-900 flex items-center space-x-2">
-            <FileText className="h-5 w-5 text-blue-600" />
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center space-x-2 transition-colors duration-500">
+            <FileText className="h-5 w-5 text-blue-600 dark:text-blue-300" />
             <span>Uploaded Files</span>
           </h3>
           {uploadedFiles.map((uploadedFile, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200 shadow-sm"
+              className="flex items-center justify-between p-6 bg-white/80 dark:bg-slate-900/70 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-500"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-blue-600" />
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-500/20 dark:to-indigo-500/20 rounded-xl flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-blue-600 dark:text-blue-300" />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900">{uploadedFile.file.name}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100">{uploadedFile.file.name}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-300">
                     {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
@@ -163,25 +163,25 @@ const DocumentUpload = ({ onDocumentUploaded }: DocumentUploadProps) => {
               <div className="flex items-center space-x-3">
                 {uploadedFile.status === 'uploading' && (
                   <div className="flex items-center space-x-3">
-                    <div className="w-24 bg-slate-200 rounded-full h-2">
+                    <div className="w-24 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                       <div
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${uploadedFile.progress}%` }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">{uploadedFile.progress}%</span>
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{uploadedFile.progress}%</span>
                   </div>
                 )}
                 
                 {uploadedFile.status === 'success' && (
-                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-xl">
+                  <div className="flex items-center space-x-2 text-green-600 dark:text-green-300 bg-green-50 dark:bg-green-500/10 px-3 py-2 rounded-xl">
                     <CheckCircle className="h-5 w-5" />
                     <span className="text-sm font-semibold">Uploaded</span>
                   </div>
                 )}
                 
                 {uploadedFile.status === 'error' && (
-                  <div className="flex items-center space-x-2 text-red-600 bg-red-50 px-3 py-2 rounded-xl">
+                  <div className="flex items-center space-x-2 text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-xl">
                     <AlertCircle className="h-5 w-5" />
                     <span className="text-sm font-semibold">{uploadedFile.error}</span>
                   </div>
@@ -189,7 +189,7 @@ const DocumentUpload = ({ onDocumentUploaded }: DocumentUploadProps) => {
                 
                 <button
                   onClick={() => removeFile(uploadedFile.file)}
-                  className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-lg"
+                  className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
                 >
                   <X className="h-5 w-5" />
                 </button>

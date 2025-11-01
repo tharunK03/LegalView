@@ -66,7 +66,7 @@ if query:
     
     with st.spinner("🔍 Searching through your documents..."):
         try:
-            result = qa_chain({"query": query})
+            result = qa_chain.invoke({"query": query})
             
             # Display answer
             st.markdown("### 📝 Answer:")
