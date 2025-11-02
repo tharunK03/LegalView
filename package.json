@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/tharunK03/LegalVieW#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "prom-client": "^15.1.0"
   }
 }

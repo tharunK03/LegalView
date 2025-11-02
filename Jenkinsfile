@@ -3,10 +3,10 @@ pipeline {
     
     environment {
         APP_NAME      = 'legalview'
-        IMAGE_NAME    = 'legalview'
-        REGISTRY      = 'docker.io/tharun03k'
-        K8S_NAMESPACE = 'prod'
-        BUILD_TAG     = "${BUILD_NUMBER}"
+    IMAGE_NAME    = 'legalview'
+    REGISTRY      = 'docker.io/tharun03k'
+    K8S_NAMESPACE = 'prod'
+    BUILD_TAG     = "${BUILD_NUMBER}"
         GIT_SHORT_SHA = "${env.GIT_COMMIT?.take(7) ?: 'local'}"
     }
 
@@ -108,6 +108,55 @@ pipeline {
                     echo "=== Health Check ==="
                     kubectl -n ${K8S_NAMESPACE} get pods -l app=${APP_NAME} -o wide
                     kubectl -n ${K8S_NAMESPACE} get svc ${APP_NAME}
+                    '''
+                }
+            }
+        }
+
+        // 📈 STAGE 7: Metrics Health Check
+        stage('Metrics Health Check') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-prod', variable: 'KCFG')]) {
+                    sh '''
+                    export KUBECONFIG="$KCFG"
+                    IDLE=$(kubectl -n ${K8S_NAMESPACE} get svc ${APP_NAME} -o jsonpath='{.spec.selector.color}')
+                    echo "Querying Prometheus for color=${IDLE}"
+                    IDLE_COLOR="${IDLE}" python3 <<'PY'
+import json
+import os
+import sys
+import subprocess
+import urllib.parse
+
+idle = os.environ['IDLE_COLOR']
+query = f'sum(legalview_http_requests_total{{color="{idle}"}})'
+encoded_query = urllib.parse.quote(query, safe='()[]{}=,"')
+prom_path = "/api/v1/namespaces/monitoring/services/http:monitoring-kube-prometheus-stack-prometheus:9090/proxy/api/v1/query?query=" + encoded_query
+
+proc = subprocess.run(
+    ["kubectl", "-n", "monitoring", "get", "--raw", prom_path],
+    capture_output=True,
+    text=True,
+)
+
+if proc.returncode != 0:
+    print("kubectl query failed:", proc.stderr.strip())
+    sys.exit(proc.returncode)
+
+payload = json.loads(proc.stdout)
+
+if payload.get('status') != 'success':
+    print(f"Prometheus returned error: {payload}")
+    sys.exit(1)
+
+results = payload.get('data', {}).get('result', [])
+if not results:
+    print("No Prometheus metrics returned for legalview; failing health check.")
+    sys.exit(1)
+
+value = results[0].get('value', ['0', '0'])[1]
+print(f"Prometheus query value: {value}")
+PY
                     '''
                 }
             }
