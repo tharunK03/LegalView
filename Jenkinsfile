@@ -131,7 +131,7 @@ import urllib.parse
 idle = os.environ['IDLE_COLOR']
 query = f'sum(legalview_http_requests_total{{color="{idle}"}})'
 encoded_query = urllib.parse.quote(query, safe='()[]{}=,"')
-prom_path = "/api/v1/namespaces/monitoring/services/http:monitoring-kube-prometheus-stack-prometheus:9090/proxy/api/v1/query?query=" + encoded_query
+prom_path = "/api/v1/namespaces/monitoring/services/http:monitoring-kube-prometheus-prometheus:9090/proxy/api/v1/query?query=" + encoded_query
 
 proc = subprocess.run(
     ["kubectl", "-n", "monitoring", "get", "--raw", prom_path],
