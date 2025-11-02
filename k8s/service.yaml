@@ -4,11 +4,11 @@ metadata:
   name: legalview
   namespace: prod
 spec:
-  type: LoadBalancer
+  selector:
+    app: legalview
+    color: blue
   ports:
     - port: 80
       targetPort: 8080
       protocol: TCP
-  selector:
-    app: legalview
-    color: blue
+  type: LoadBalancer

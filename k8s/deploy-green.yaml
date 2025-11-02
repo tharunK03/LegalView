@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: legalview-green
   namespace: prod
+  labels:
+    app: legalview
+    color: green
 spec:
   replicas: 2
   selector:
