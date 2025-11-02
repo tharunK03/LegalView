@@ -92,7 +92,8 @@ pipeline {
                     export KUBECONFIG="$KCFG"
                     IDLE=$(kubectl -n ${K8S_NAMESPACE} get deploy -l app=${APP_NAME},color!=blue -o jsonpath='{.items[0].metadata.labels.color}')
                     echo "Switching Service selector to color=${IDLE}"
-                    kubectl -n ${K8S_NAMESPACE} patch svc ${APP_NAME} -p "{\"spec\":{\"selector\":{\"app\":\"${APP_NAME}\",\"color\":\"${IDLE}\"}}}"
+                    PATCH_PAYLOAD=$(printf '{"spec":{"selector":{"app":"%s","color":"%s"}}}' "${APP_NAME}" "${IDLE}")
+                    kubectl -n ${K8S_NAMESPACE} patch svc ${APP_NAME} --type=merge --patch "${PATCH_PAYLOAD}"
                     '''
                 }
             }
