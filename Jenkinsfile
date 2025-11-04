@@ -71,13 +71,13 @@ pipeline {
                     echo "Active=$ACTIVE, Idle=$IDLE"
 
                     IMAGE="${REGISTRY}/${IMAGE_NAME}:${GIT_SHORT_SHA}"
-                    kubectl apply -f k8s/ns.yaml
-                    kubectl -n ${K8S_NAMESPACE} apply -f k8s/service.yaml
+                    kubectl apply --validate=false -f k8s/ns.yaml
+                    kubectl -n ${K8S_NAMESPACE} apply --validate=false -f k8s/service.yaml
 
                     cp k8s/deploy-${IDLE}.yaml render.yaml
                     sed -i.bak "s|REPLACEME_IMAGE:REPLACEME_TAG|${IMAGE}|g" render.yaml
 
-                    kubectl -n ${K8S_NAMESPACE} apply -f render.yaml
+                    kubectl -n ${K8S_NAMESPACE} apply --validate=false -f render.yaml
                     kubectl -n ${K8S_NAMESPACE} rollout status deploy/${APP_NAME}-${IDLE} --timeout=90s
                     '''
                 }
