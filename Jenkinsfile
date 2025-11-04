@@ -126,6 +126,7 @@ import json
 import os
 import sys
 import subprocess
+import time
 import urllib.parse
 
 idle = os.environ['IDLE_COLOR']
@@ -133,29 +134,37 @@ query = f'sum(legalview_http_requests_total{{color="{idle}"}})'
 encoded_query = urllib.parse.quote(query, safe='()[]{}=,"')
 prom_path = "/api/v1/namespaces/monitoring/services/http:monitoring-kube-prometheus-prometheus:9090/proxy/api/v1/query?query=" + encoded_query
 
-proc = subprocess.run(
-    ["kubectl", "-n", "monitoring", "get", "--raw", prom_path],
-    capture_output=True,
-    text=True,
-)
+retries = 5
+for attempt in range(1, retries + 1):
+    proc = subprocess.run(
+        ["kubectl", "-n", "monitoring", "get", "--raw", prom_path],
+        capture_output=True,
+        text=True,
+    )
 
-if proc.returncode != 0:
-    print("kubectl query failed:", proc.stderr.strip())
-    sys.exit(proc.returncode)
+    if proc.returncode != 0:
+        print("kubectl query failed:", proc.stderr.strip())
+        sys.exit(proc.returncode)
 
-payload = json.loads(proc.stdout)
+    payload = json.loads(proc.stdout)
 
-if payload.get('status') != 'success':
-    print(f"Prometheus returned error: {payload}")
-    sys.exit(1)
+    if payload.get('status') != 'success':
+        print(f"Prometheus returned error: {payload}")
+        sys.exit(1)
 
-results = payload.get('data', {}).get('result', [])
-if not results:
-    print("No Prometheus metrics returned for legalview; failing health check.")
-    sys.exit(1)
+    results = payload.get('data', {}).get('result', [])
+    if results:
+        value = results[0].get('value', ['0', '0'])[1]
+        print(f"Prometheus query value: {value}")
+        break
 
-value = results[0].get('value', ['0', '0'])[1]
-print(f"Prometheus query value: {value}")
+    if attempt < retries:
+        wait_seconds = attempt * 10
+        print(f"No metrics yet for color={idle} (attempt {attempt}/{retries}). Retrying in {wait_seconds}s...")
+        time.sleep(wait_seconds)
+    else:
+        print("No Prometheus metrics returned for legalview after multiple attempts; failing health check.")
+        sys.exit(1)
 PY
                     '''
                 }
