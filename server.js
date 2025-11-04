@@ -3,6 +3,7 @@ const promClient = require('prom-client');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const DEPLOY_COLOR = process.env.POD_COLOR || 'unknown';
 
 // Prometheus metrics setup
 promClient.collectDefaultMetrics();
@@ -11,13 +12,17 @@ promClient.collectDefaultMetrics();
 const httpRequestCounter = new promClient.Counter({
   name: 'legalview_http_requests_total',
   help: 'Total HTTP requests handled by route',
-  labelNames: ['method', 'route', 'status']
+  labelNames: ['color', 'method', 'route', 'status']
 });
+
+// Record a zero-value sample so the metric appears even before traffic arrives
+httpRequestCounter.labels(DEPLOY_COLOR, 'bootstrap', 'bootstrap', '0').inc(0);
 
 // Middleware to track request counts
 app.use((req, res, next) => {
   res.on('finish', () => {
-    httpRequestCounter.labels(req.method, req.route?.path || req.path, res.statusCode).inc();
+    const statusCode = res.statusCode?.toString() || '0';
+    httpRequestCounter.labels(DEPLOY_COLOR, req.method, req.route?.path || req.path, statusCode).inc();
   });
   next();
 });

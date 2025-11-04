@@ -21,6 +21,11 @@ spec:
       containers:
         - name: legalview
           image: REPLACEME_IMAGE:REPLACEME_TAG
+          env:
+            - name: POD_COLOR
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['color']
           ports:
             - containerPort: 8080
           readinessProbe:
